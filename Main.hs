@@ -2,14 +2,22 @@ module Main(main) where
 
 import Graphics.Gloss
 
-window :: Display
-window = InWindow "My First Window" (200, 200) (10, 10)
+width, height, offset :: Int
+width = 300
+height = 300
+offset = 100
 
-background :: Color
-background = white
+window :: Display
+window = InWindow "Haskell Pong" (width, height) (offset, offset)
+
+background, ballColor, paddleColor :: Color
+background = black
+ballColor = light green
+paddleColor = light red
 
 drawing :: Picture
-drawing = circle 80
+drawing = pictures [color ballColor   $ circleSolid 30, 
+                    color paddleColor $ rectangleSolid 10 50]
 
 main :: IO()
 main = display window background drawing
