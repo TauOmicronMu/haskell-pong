@@ -55,8 +55,22 @@ render game = pictures [ball,
         genPaddle borderColor x y = pictures [translate x y $ color borderColor $ rectangleSolid 26 86,
                                               translate x y $ color paddleColor $ rectangleSolid 20 80]
 
-main :: IO()
-main = display window background (render initialState)
+-- | Update the ball position from it's current velocity
+moveBall secs game = game { ballLoc = (x', y') }
+    where
+        -- Previous location and velocity
+        (x, y)  = ballLoc game
+        (vx, vy) = ballVel game
 
+        --  New locations
+        x' = x * vx * secs
+        y' = y * vy * secs 
+
+main :: IO()
+main = animate window background frame
+    where
+        frame :: Float -> Picture
+        frame secs = render $ moveBall secs initialState
+    
 
 
