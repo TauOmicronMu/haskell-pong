@@ -1,6 +1,10 @@
 module Main(main) where
 
 import Graphics.Gloss
+import Graphics.Gloss.Data.ViewPort
+
+fps :: Int
+fps = 60
 
 width, height, offset :: Int
 width = 300
@@ -66,11 +70,9 @@ moveBall secs game = game { ballLoc = (x', y') }
         x' = x * vx * secs
         y' = y * vy * secs 
 
-main :: IO()
-main = animate window background frame
-    where
-        frame :: Float -> Picture
-        frame secs = render $ moveBall secs initialState
-    
+update :: ViewPort -> Float -> GameState -> GameState
+update _ = moveBall
 
+main :: IO()
+main = simulate window background fps initialState render update
 
