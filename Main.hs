@@ -22,10 +22,17 @@ wallColor = greyN 0.75
 p1BorderColor = rose
 p2BorderColor = yellow
 
+-- Create some aliases for radius and position.
+type Radius = Float
+type Position = (Float, Float)
+
+radius :: Radius
+radius = 10
+
 -- | Holds the state of the current pong game
 data GameState = Game {
-    ballLoc :: (Float, Float), -- ^ (x, y) location of the ball
-    ballVel :: (Float, Float), -- ^ (x, y) velocity of the ball
+    ballLoc :: Position, -- ^ (x, y) location of the ball
+    ballVel :: Position, -- ^ (x, y) velocity of the ball
     player1 :: Float, -- ^ height of the 1st (left) player's paddle
     player2 :: Float -- ^ height of the 2nd (right) player's paddle
 } deriving Show
@@ -46,7 +53,7 @@ render game = pictures [ball,
                         genPaddle p2BorderColor (-120) $ player2 game]
     where 
         -- The pong ball
-        ball = uncurry translate (ballLoc game) $ color ballColor $ circleSolid 10
+        ball = uncurry translate (ballLoc game) $ color ballColor $ circleSolid radius
   
         -- The walls at the top and bottom of the screen
         wall :: Float -> Picture
@@ -60,20 +67,30 @@ render game = pictures [ball,
                                               translate x y $ color paddleColor $ rectangleSolid 20 80]
 
 -- | Update the ball position from it's current velocity
-moveBall seconds game = game { ballLoc = (x', y') }
+moveBall secs game = game { ballLoc = (x', y') }
     where
         -- Previous location and velocity
         (x, y)  = ballLoc game
         (vx, vy) = ballVel game
 
         --  New locations
-        x' = x * vx * seconds
-        y' = y * vy * seconds 
+        x' = x * vx * secs
+        y' = y * vy * secs 
 
+wallCollision :: Position -> Radius -> Bool
+wallCollision (_, y) radius = topCollision || bottomCollision 
+    where 
+        topCollision = y - radius <= -fromIntegral width / 2
+        bottomCollision = y + radius >= fromIntegral width / 2
 
 main :: IO()
 main = simulate window background fps initialState render update
+    where 
+        update :: ViewPort -> Float -> GameState -> GameState
+        update _ = moveBall 
 
-update :: ViewPort -> Float -> GameState -> GameState
-update _ = moveBall
-
+{- main = animate window background frame
+    where
+        frame :: Float -> Picture
+        frame secs = render $ moveBall secs initialState
+-}
