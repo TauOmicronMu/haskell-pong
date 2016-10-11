@@ -18,4 +18,4 @@ cabal-version:       >=1.8
 executable haskell-pong
   main-is: Main.hs             
   -- other-modules:       
-  build-depends: base, gloss
+  build-depends: base==4.7.*, gloss==1.8.*

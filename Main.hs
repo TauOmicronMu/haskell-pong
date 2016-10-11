@@ -60,19 +60,20 @@ render game = pictures [ball,
                                               translate x y $ color paddleColor $ rectangleSolid 20 80]
 
 -- | Update the ball position from it's current velocity
-moveBall secs game = game { ballLoc = (x', y') }
+moveBall seconds game = game { ballLoc = (x', y') }
     where
         -- Previous location and velocity
         (x, y)  = ballLoc game
         (vx, vy) = ballVel game
 
         --  New locations
-        x' = x * vx * secs
-        y' = y * vy * secs 
+        x' = x * vx * seconds
+        y' = y * vy * seconds 
 
-update :: ViewPort -> Float -> GameState -> GameState
-update _ = moveBall
 
 main :: IO()
 main = simulate window background fps initialState render update
+
+update :: ViewPort -> Float -> GameState -> GameState
+update _ = moveBall
 
